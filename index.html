@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Libbl Chat</title>
+</head>
+<body>
+    <div>
+        <div id="chat">
+            <p>msg</p>
+            <p>msg</p>
+            
+        </div>
+        <div>
+            <input id="messageBox" type="text" placeholder="Guess or message your friends...">
+            <button id="sendButton" onclick="sendMessage()" enterkeyhint="send"> ">" </button>
+
+        </div>
+
+    </div>
+
+    <script>
+        document.getElementById("messageBox").addEventListener("keypress", function(){
+            if(event.key === "Enter"){
+                document.getElementById("sendButton").click();
+            }
+        });
+
+        function sendMessage(){ 
+            const message = document.getElementById("messageBox");
+            const chat = document.getElementById("chat");
+
+            const newDivElement = document.createElement("div");
+            newDivElement.style.backgroundColor = "#a7d1ac";
+            newDivElement.style.outlineColor = "#2b8235";
+            newDivElement.style.outlineStyle = "solid";
+            newDivElement.style.borderRadius = "2px";
+            newDivElement.style.padding = "2px";
+            
+
+            const newPElement = document.createElement("p"); 
+            newPElement.style.margin = "2px";
+
+            const node = document.createTextNode(message.value);
+            newPElement.appendChild(node);
+            newDivElement.appendChild(newPElement);
+            chat.appendChild(newDivElement);
+
+
+            message.value = "";
+
+        }
+
+    </script>
+</body>
+</html>

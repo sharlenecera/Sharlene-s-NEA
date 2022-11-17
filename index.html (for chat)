@@ -10,48 +10,72 @@
 <body>
     <div>
         <div id="chat">
-            <p>msg</p>
+            <p>msg</p> <!--starting messages to appear on screen (temporary)-->>
             <p>msg</p>
             
         </div>
         <div>
             <input id="messageBox" type="text" placeholder="Guess or message your friends...">
-            <button id="sendButton" onclick="sendMessage()" enterkeyhint="send"> ">" </button>
+            <button id="sendButton" onclick="sendMessageToServer()" enterkeyhint="send"> > </button>
 
         </div>
 
     </div>
 
-    <script>
+    <script src="index.js">
+        const ws = new WebSocket("ws://localhost:8080");
+
+        ws.addEventListener("message", function(event){ // for when receiving messages from server
+            const messageFromServer = JSON.parse(event.data);
+            if(messageFromServer.type === "message"){
+                displayMessage(messageFromServer);
+            }
+        });
+
         document.getElementById("messageBox").addEventListener("keypress", function(){
             if(event.key === "Enter"){
                 document.getElementById("sendButton").click();
             }
         });
 
-        function sendMessage(){ 
-            const message = document.getElementById("messageBox");
+        function sendMessageToServer(){ // called when send message button is clicked
+            const messageBox = document.getElementById("messageBox");
+            const message = messageBox.value;
+
+            if(message === ""){
+                alert("Error. Cannot send empty messages.");
+            }
+            else{
+                ws.send(JSON.stringify({
+                    "type": "message",
+                    "messageContent": message
+                }));
+                displayMessage(message);
+                messageBox.value = "";
+            }
+        }
+
+        function displayMessage(message){ 
             const chat = document.getElementById("chat");
 
             const newDivElement = document.createElement("div");
             newDivElement.style.backgroundColor = "#a7d1ac";
             newDivElement.style.outlineColor = "#2b8235";
             newDivElement.style.outlineStyle = "solid";
+            newDivElement.style.outlineWidth = "1px";
             newDivElement.style.borderRadius = "2px";
-            newDivElement.style.padding = "2px";
-            
+            newDivElement.style.margin = "6px";
 
-            const newPElement = document.createElement("p"); 
+            // for css : message.style.marginTop = "4px";
+            // for css : sendButton.style.marginTop = "4px";
+
+            const newPElement = document.createElement("p"); //making a new paragraph element
             newPElement.style.margin = "2px";
 
-            const node = document.createTextNode(message.value);
-            newPElement.appendChild(node);
-            newDivElement.appendChild(newPElement);
-            chat.appendChild(newDivElement);
-
-
-            message.value = "";
-
+            const node = document.createTextNode(message); 
+            newPElement.appendChild(node); // inserting the text into the paragraph element
+            newDivElement.appendChild(newPElement); // inserting the paragraph into the new div element
+            chat.appendChild(newDivElement); // inserting the div element into the chat div
         }
 
     </script>

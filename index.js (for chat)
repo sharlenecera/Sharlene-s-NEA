@@ -1,0 +1,12 @@
+import WebSocket, {WebSocketServer} from "ws";
+const socket = new WebSocketServer({port:8080}); // using my local port number to test the website
+socket.on("connection", ws => {
+    ws.on("message", message => {
+        const messageFromClient = JSON.parse(message);
+
+        if(messageFromClient.type === "message"){  // if the data received is a message,
+            socket.clients.forEach(eachClient => { // it will be sent to all the clients apart from the one that sent it
+                if(eachClient !== ws && eachClient.readyState==1){ //ready state is 1 when a socket is OPEN and ready to communicate
+                    eachClient.send(JSON.stringify({
+                        "type": "message",
+                        "messageContent": messageFromClient.messageContent

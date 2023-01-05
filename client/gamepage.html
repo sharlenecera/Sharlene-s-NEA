@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Page</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body id="gamepageBody">
+    <div id="menu">
+        <a href="index.html">Home</a>
+    </div>
+
+    <div id="leaderboard"></div>
+
+    <div id="gameInfo">
+
+
+    </div>
+    <div class="flex-page">
+
+    <div class="canvasWithTools">
+    <div id="canvasContainer">
+    
+        <canvas id="canvas" style="border:1px solid #000000;">
+        <script>
+            let canvasHeight = 500;
+            let canvasWidth = 500;
+            let c = document.getElementById("canvas");
+            c.height = canvasHeight;
+            c.width = canvasWidth;
+            let ctx = c.getContext("2d");
+            
+
+            let buttonSelected = "paintbrush";
+            let penColour = "#000000"; // for eraser too, colour would be white for eraser
+            let penSize = 20;
+
+            /* not needed - can delete later
+            ctx.strokeStyle = "#FF0000";
+            ctx.beginPath();
+            
+            ctx.moveTo(10,10);
+            ctx.lineTo(10,11);
+            ctx.stroke();
+    
+            
+            ctx.beginPath();
+            ctx.arc(20,20,0.5,0,2*Math.PI);
+            ctx.fill();
+            */
+
+    
+            /*function f(){
+                let x = event.pageX;
+                let y = event.pageY;
+                let coor = "X coords: " + x + ", Y coords: " + y;
+                console.log(coor);
+                ctx.beginPath(); 
+            };*/
+    
+            function setPaintbrush() {
+                buttonSelected = "paintbrush";
+            }
+
+            function setEraser() {
+                buttonSelected = "eraser";
+            }
+
+            function setColour(colour) {
+                buttonSelected = "paintbrush";
+                penColour = colour;
+            }
+
+            function sliding(x) {
+                penSize = x;
+            }
+
+            function clearCanvas() {
+                c.height = canvasHeight;
+            }
+
+            function fill() {
+                
+            }
+
+            function undo() {
+
+            }
+
+            function redo() {
+
+            }
+    
+            c.addEventListener("mousedown", function draw(event){
+                let x = event.clientX - c.offsetLeft; // offset makes it so that the line drawn is from where the mouse pointer is because without this, the line is offset
+                let y = event.clientY - c.offsetTop;
+
+                ctx.lineWidth = penSize;
+                
+                if(buttonSelected==="paintbrush"){
+                    ctx.strokeStyle = penColour; 
+
+                    ctx.beginPath();
+                    ctx.arc(x,y,0.5 * penSize,0,2*Math.PI);
+                    ctx.fill();
+
+                    ctx.strokeStyle = penColour;
+
+                    ctx.beginPath();
+                    ctx.moveTo(x,y);
+                }
+                else if(buttonSelected==="eraser"){
+                    ctx.strokeStyle = "#FFFFFF";
+
+                    ctx.beginPath();  // exact same as the above
+                    ctx.arc(x,y,0.5,0,2*Math.PI);
+                    ctx.fill();
+
+                    ctx.strokeStyle = "#FFFFFF";
+
+                    ctx.beginPath();
+                    ctx.moveTo(x,y);
+                }
+            });
+    
+            c.addEventListener("mousemove", function move(event){
+                if(event.buttons === 1){
+                    x = event.clientX - c.offsetLeft;
+                    y = event.clientY - c.offsetTop;
+                    ctx.lineTo(x,y);
+                    ctx.stroke();
+                }
+            })
+    
+           
+            
+        </script>
+        </canvas>
+
+    <div id="toolbox">
+        <button type="button" onclick="setPaintbrush()">
+            <img id="paintbrush" class="toolIcon" src="paintbrush.png" alt="paintbrush icon">
+
+        </button>
+
+        <button type="button" onclick="setEraser()">
+            <img id="eraser" class="toolIcon" src="eraser.png" alt="eraser icon">
+
+        </button>
+
+        <button type="button" onclick="clearCanvas()">
+            <img id="clear" class="toolIcon" src="clear.png" alt="clear screen icon">
+
+        </button>
+
+        <button type="button" onclick="fill()"> <!--no functionality yet-->
+            <img id="fill" class="toolIcon" src="fill.png" alt="fill icon">
+
+        </button>
+
+        <button type="button" onclick="undo()">
+            <img id="undo" class="toolIcon" src="undo.png" alt="undo icon">
+
+        </button>
+
+        <button type="button" onclick="redo()">
+            <img id="redo" class="toolIcon" src="redo.png" alt="redo icon">
+
+        </button>
+
+        <div id="colourBox">
+            <div id="currentColour" class="box">
+
+            </div>
+
+            <button type="button" onclick="setColour(this.value)" value="black" class="box black">
+
+            </button>
+
+            <button type="button" onclick="setColour(this.value)" value="white" class="box white">
+
+            </button>
+
+            <button type="button" onclick="setColour(this.value)" value="grey" class="box grey">
+
+            </button>
+
+            <button type="button" onclick="setColour(this.value)" value="red" class="box red">
+
+            </button>
+
+            <button type="button" onclick="setColour(this.value)" value="orange" class="box orange">
+
+            </button>
+
+            <button type="button" onclick="setColour(this.value)" value="yellow" class="box yellow">
+
+            </button>
+
+            <button type="button" onclick="setColour(this.value)" value="green" class="box green">
+
+            </button>
+            
+
+            <button type="button" onclick="setColour(this.value)" value="blue" class="box blue">
+
+            </button>
+
+            <button type="button" onclick="setColour(this.value)" value="purple" class="box purple">
+
+            </button>
+
+            <button type="button" onclick="setColour(this.value)" value="pink" class="box pink">
+
+            </button>
+
+            <button type="button" onclick="setColour(this.value)" value="brown" class="box brown">
+
+            </button>
+
+
+            <!--<script>
+                const colours = ["black", "white", "grey", "red", "orange", "yellow", "green", "blue", "purple", "pink", "brown"];
+                const container = document.getElementById("colourBox");
+
+                for(let i=0; i<colours.length; i++){
+                    const newButton = document.createElement("button");
+                    newButton.style.backgroundColor = colours[i];
+                    newButton.classList.add("box");
+                    newButton.addEventListener("click", setColour(colours[i]));
+
+                    container.appendChild(newButton);
+                }
+
+            </script>-->
+        </div>
+
+        <div class="sizeSliderContainer">
+            <input id="sizeSlider" oninput="sliding(this.value)" type="range" min="1" max="100">
+        </div>
+
+    </div>
+
+    </div>
+    </div>
+    <div id="chat">
+        
+        <!--<div>
+            <p>msg</p> starting messages to appear on screen (temporary)>
+            <p>msg</p>
+        </div>-->
+        
+        
+        <div>
+            <input id="messageBox" type="text" placeholder="Guess or message your friends...">
+            <button id="sendButton" onclick="sendMessageToServer()" enterkeyhint="send"> > </button>
+
+        </div>
+    </div>
+        <script>
+            let ws = new WebSocket("ws://localhost:8080");
+
+            ws.addEventListener("message", function(event){ // for when receiving messages from server
+                const messageFromServer = JSON.parse(event.data);
+                if(messageFromServer.type === "message"){
+                    displayMessage(messageFromServer.messageContent);
+                }
+            });
+
+            document.getElementById("messageBox").addEventListener("keypress", function(){
+                if(event.key === "Enter"){ // clicking enter also presses button
+                    document.getElementById("sendButton").click();
+                }
+            });
+
+            function sendMessageToServer(){ // called when send message button is clicked
+                const messageBox = document.getElementById("messageBox");
+                const message = messageBox.value;
+
+                if(message === ""){
+                    alert("Error. Cannot send empty messages.");
+                }
+                else{
+                    ws.send(JSON.stringify({
+                        "type": "message",
+                        "messageContent": message
+                    }));
+                    displayMessage(message);
+                    messageBox.value = "";
+                }
+            }
+
+            function displayMessage(message){ 
+                const chat = document.getElementById("chat");
+
+                const newDivElement = document.createElement("div");
+                newDivElement.style.backgroundColor = "#a7d1ac";
+                newDivElement.style.outlineColor = "#2b8235";
+                newDivElement.style.outlineStyle = "solid";
+                newDivElement.style.outlineWidth = "1px";
+                newDivElement.style.borderRadius = "2px";
+                newDivElement.style.margin = "6px";
+
+                // for css : message.style.marginTop = "4px";
+                // for css : sendButton.style.marginTop = "4px";
+
+                const newPElement = document.createElement("p"); //making a new paragraph element
+                newPElement.style.margin = "2px";
+
+                const node = document.createTextNode(message); 
+                newPElement.appendChild(node); // inserting the text into the paragraph element
+                newDivElement.appendChild(newPElement); // inserting the paragraph into the new div element
+                chat.appendChild(newDivElement); // inserting the div element into the chat div
+            }
+            
+        </script>  
+    </div>
+    </div>
+</body>
+</html>

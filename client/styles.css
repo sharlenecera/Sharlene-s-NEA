@@ -1,0 +1,182 @@
+/* * {
+    margin: auto;
+    text-align: center;
+}*/
+
+
+#pageTitle {
+    font-size: 50 px;
+}
+
+/*home page */
+
+#privateGameButton {
+    text-decoration: none;
+    background-color: #9aec13;
+}
+
+#customiseIcon {
+    width: 200px;
+    height: 200px;
+}
+
+.iconPart {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+}
+
+/*lobby page*/
+
+.lobbyTitles {
+    display: box;
+}
+
+.settings {
+    outline-color: black;
+    outline-width: 2px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+#numRounds, #roundLength {
+    width: 150px;
+    height: 30px;
+}
+
+#changeSettings {
+    display: block;
+}
+
+/*game page*/
+
+
+#gamepageBody {
+    width: 100%;
+    height:100%;
+    background-color: grey;
+}
+
+#canvasContainer {
+    background-color: white;
+    padding: 10px;
+    order: 1;
+    flex: 70%;
+    width: 100%;
+    height: 500px;
+    width: 500px;
+}
+
+#canvas {
+    width: 100%;
+    height: 100%;
+}
+
+#chat {
+    background-color: lightgreen;
+    padding: 20px;
+    order: 2;
+    flex: 30%;
+}
+
+.canvasWithTools {
+    background-color: green;
+}
+
+.toolIcon {
+    width: 30px;
+    height: 30px;
+}
+
+#undo
+
+.sizeSliderContainer {
+    width: 100%;
+}
+
+#sizeSlider {
+    width: 70%;
+    height: 10px;
+    background: grey;
+    outline: none;
+}
+
+#currentColour {
+    width: 100%;
+    background-color: black;
+}
+
+.box {
+    width: 15px;
+    height: 15px;
+
+}
+
+
+.black{
+    background-color: black;
+}
+
+.white{
+    background-color: white;
+}
+
+.grey{
+    background-color: grey;
+}
+
+.red{
+    background-color: red;
+}
+
+.orange{
+    background-color: orange;
+}
+
+.yellow{
+    background-color: yellow;
+}
+
+.green{
+    background-color: green;
+}
+
+.blue{
+    background-color: blue;
+}
+
+.purple{
+    background-color: purple;
+}
+
+.pink{
+    background-color: pink;
+}
+
+.brown{
+    background-color: brown;
+}
+
+
+#currentColour {
+    width: 30px;
+    height: 30px;
+    outline-width: 2px;
+    outline-color: black;
+}
+
+
+.flex-page {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    align-content: stretch;
+}
+
+@media screen and (max-widdth: 700px) { /*responsive layout for menu and stuff */
+
+}

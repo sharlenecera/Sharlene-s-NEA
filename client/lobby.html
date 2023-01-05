@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lobby</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="index.js"></script>
 </head>
 <body>
     <div id="menu">
@@ -14,6 +15,21 @@
     <div id="settings">
         <h2 class="lobbyTitles">Settings</h2>
         <form id="changeSettings">
+            <script>
+                let form = document.getElementById("changeSettings");
+
+                let numRounds = 0;
+                let roundLength = 0;
+                let useCustomWords = false;
+
+                function getSettings() {
+                    event.preventDefault(); // stops the form from being submitted
+
+                    numRounds = form["numRounds"].value;
+                    roundLength = form["roundLength"].value;
+                    useCustomWords = form["useCustomWords"].checked; //returns boolean
+                }
+            </script>
             <h3>Lobby</h3>
             <div class="settings">
                 <label for="numRounds">Number of Rounds</label>
@@ -57,12 +73,12 @@
 
             <div class="settings">
                 <label for="useCustomWords">Only use custom words.</label>
-                <input type="checkbox" id="useCustomWords">
+                <input type="checkbox" id="useCustomWords" name="useCustom">
 
             </div>
 
             <div class="settings">
-                <a id="startGameButton" href="gamepage.html">Start Game</a>
+                <button id="startGameButton" onclick="getSettings()" href="gamepage.html">Start Game</button>
             </div>
 
         </form>

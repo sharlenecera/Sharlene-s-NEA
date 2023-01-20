@@ -2,6 +2,15 @@
 <html lang="en">
 <head>
     <script src="index.js">
+        let ws = new WebSocket("ws://localhost:8080");
+        clientID = null;
+        ws.onmessage = message => {
+            if(message.data.method === "connect"){
+                clientID = message.data.clientID;
+            }
+        }
+
+
         <!--The below functions change the picture between the arrows in the custmoise icon box-->
         function leftEyes() {
 
@@ -26,6 +35,33 @@
         function rightBody() {
     
         }
+
+        /*The below functions are for the play game and play private game buttons*/
+        function createGuid() {
+        const firstPart = Math.floor(Math.random() * Math.pow(16,8)).toString(16);
+        const secondPart = Math.floor(Math.random() * Math.pow(16,4)).toString(16);
+        const thirdPart = Math.floor(Math.random() * Math.pow(16,4)).toString(16);
+        const fourthPart = Math.floor(Math.random() * Math.pow(16,4)).toString(16);
+        const fifthPart = Math.floor(Math.random() * Math.pow(16,12)).toString(16);
+        const guid = firstPart + '-' + secondPart + '-' + thirdPart + '-' + fourthPart + '-' + fifthPart
+        return guid;
+}
+        
+        function playPublicGame() {
+            window.location.href = "gamepage.html"; // redirects user to game
+        }
+
+        function playPrivateGame(){
+            window.location.href = "lobby.html"; // redirects user to the lobby page
+            const gameID = createGuid();
+            ws.send(JSON.stringify({
+                method: "createGame",
+                gameID: gameID,
+                clientID: clientID
+            }));
+        }
+
+
     </script>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -89,8 +125,14 @@
 
         </div>
 
+        <!--
         <div><a id="playButton" class="homepageButtons" href="gamepage.html">Play</a>
             <a href="lobby.html" target="_self" id="privateGameButton" class="homepageButtons">Create Private Game</a>
+        </div>
+        -->
+        <div>
+            <button id="playButton" class="homepageButtons" onclick="playPublicGame()">Play</button>
+            <button id="privateGameButton" class="homepageButtons" onclick="playPrivateGame()">Create Private Game</button>
         </div>
         
     </div>

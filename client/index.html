@@ -3,7 +3,12 @@
 <head>
     <script src="index.js">
         let ws = new WebSocket("ws://localhost:8080");
-        clientID = null;
+        const clientID = null;
+        const gameID = null;
+        const eyes = ["eyes_1.png", "eyes_2.png", "eyes_3.png"];
+        const mouths = [];
+        const bodies = [];
+
         ws.onmessage = message => {
             if(message.data.method === "connect"){
                 clientID = message.data.clientID;
@@ -11,29 +16,82 @@
         }
 
 
-        <!--The below functions change the picture between the arrows in the custmoise icon box-->
-        function leftEyes() {
 
+        <!--The below functions change the picture between the arrows in the custmoise icon box-->
+
+        function findInStyleList(source,styleList){
+            for(let i=0; i<styleList.length; i++){
+                if(source === styleList[i]){
+                    return i;
+                }
+            }
+            return -1; // if not found, -1 is returned
+        }
+
+        function traverse(currentPosition, direction, iconStyles){ // for moving along the circular queues for each of the icon styles 
+            const queueLength = iconStyles.length;
+            if(direction === "left"){
+                if(currentPosition===0){
+                    return queueLength-1; // moves pointer to the end of the queue
+                }
+                return currentPosition -1; // decrements pointer
+
+            }
+            else if(direction === "right"){
+                if(currentPosition === queueLength-1){
+                    return 0; // moves pointer back to start
+                }
+                return currentPosition +1; // increments pointer
+                
+            }
+        }
+
+        function changeStyle(direction, style){
+            let currentImageSource = document.getElementsByClassName(style).src;
+            styleList = null;
+            //setting styleList variable in terms of which style it is
+            if(style==="eyeStyle"){ 
+                styleList = eyes;
+            }
+            else if(style === "mouthStyle"){
+                styleList = mouths;
+            }
+            else{ //for body style
+                styleList = bodies;
+            }
+            const position = findInStyleList(currentImageSource, styleList);
+
+            if(position > 0){
+                position = traverse(position, direction, styleList);
+                document.getElementsByClassName(style).src = styleList[position];
+            }
+            else{
+                console.log("Image index in eyes array not valid, it is less than 0."); // shows error if eyePosition is <0
+            }
+        }
+
+        function leftEyes() {
+            changeStyle("left", "eyeStyle");
         }
 
         function rightEyes() {
-
+            changeStyle("right", "eyeStyle");
         }
 
         function leftMouth() {
-
+            changeStyle("left", "mouthStyle");
         }
 
         function rightMouth() {
-            
+            changeStyle("right", "mouthStyle");
         }
 
         function leftBody() {
-
+            changeStyle("left", "bodyStyle");
         }
 
         function rightBody() {
-    
+            changeStyle("right", "bodyStyle");
         }
 
         /*The below functions are for the play game and play private game buttons*/
@@ -52,13 +110,13 @@
         }
 
         function playPrivateGame(){
-            window.location.href = "lobby.html"; // redirects user to the lobby page
-            const gameID = createGuid();
+            gameID = createGuid();
             ws.send(JSON.stringify({
                 method: "createGame",
                 gameID: gameID,
                 clientID: clientID
             }));
+            window.location.href = "lobby.html/" + gameID; // redirects user to the lobby page
         }
 
 
@@ -84,7 +142,7 @@
         
                 </button>
     
-                <img class="eyeStyle" src="" alt=""> <!--will add images later and functions to change images when arrows clicked-->
+                <img class="eyeStyle" id="eyeStyle" src="eyes_1.png" alt=""> <!--will add images later and functions to change images when arrows clicked-->
 
                 <button type="button" onclick="rightEyes()">
                     <img class="toolIcon" src="rightArrow.png" alt="right arrow icon">
@@ -113,7 +171,7 @@
         
                 </button>
 
-                <img class="BodyStyle" src="" alt="">
+                <img class="bodyStyle" src="" alt="">
 
                 <button type="button" onclick="rightBody()">
                     <img class="toolIcon" src="rightArrow.png" alt="right arrow icon">
@@ -154,4 +212,3 @@
 
 </body>
 </html>
-

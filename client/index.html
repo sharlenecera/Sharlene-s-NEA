@@ -1,13 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script src="index.js">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Home Page</title>
+</head>
+<body>
+    <h1 id="pageTitle">Libbl</h1>
+    <form id="enterDetails">
+    <div>
+        <div>
+            <input type="text" id="name" placeholder="Enter your name...">
+        </div>
+
+        <div id="customiseIcon" width="1000px">
+            <div id="customiseEyes" class="iconPart">
+                <button type="button" id="leftEyesButton" onclick="leftEyes()">
+                    <img class="toolIcon" src="leftArrow.png" alt="left arrow icon">
+        
+                </button>
+    
+                <img id="eyeStyle" src="eyes_1.png" alt="" height="100px" width="200px"> <!--will add images later and functions to change images when arrows clicked-->
+
+                <button type="button" id="rightEyesButton" onclick="rightEyes()">
+                    <img class="toolIcon" src="rightArrow.png" alt="right arrow icon">
+        
+                </button>
+            </div>
+            
+            <div id="customiseMouth" class="iconPart">
+                <button type="button" id="leftMouthButton" onclick="leftMouth()">
+                    <img class="toolIcon" src="leftArrow.png" alt="left arrow icon">
+        
+                </button>
+
+                <img class="mouthStyle" src="" alt="">
+
+                <button type="button" id="rightMouthButton" onclick="rightMouth()">
+                    <img class="toolIcon" src="rightArrow.png" alt="right arrow icon">
+        
+                </button>
+
+            </div>
+
+            <div id="customiseBody" class="iconPart">
+                <button type="button" id="leftBodyButton" onclick="leftBody()">
+                    <img class="toolIcon" src="leftArrow.png" alt="left arrow icon">
+        
+                </button>
+
+                <img class="bodyStyle" src="" alt="">
+
+                <button type="button" id="rightBodyButton" onclick="rightBody()">
+                    <img class="toolIcon" src="rightArrow.png" alt="right arrow icon">
+        
+                </button>
+
+            </div>
+            
+
+        </div>
+
+        
+        <div><a id="playButton" class="homepageButtons" href="gamepage.html">Play</a>
+            <a href="lobby.html" target="_self" id="privateGameButton" class="homepageButtons">Create Private Game</a>
+        </div>
+        <!--
+        <div>
+            <button id="playButton" class="homepageButtons" onclick="playPublicGame()">Play</button>
+            <button id="privateGameButton" class="homepageButtons" onclick="playPrivateGame()">Create Private Game</button>
+        </div>
+        -->
+    </div>
+
+    <div>
+
+
+    </div>
+    </form>
+
+    <div id="descriptionBox">
+        <h3>Information</h3>
+        <p id="information">blah</p>
+
+        <h3>How to play</h3>
+        <p id="howToPlay">blah blah</p>
+
+    </div>
+
+    <script>
         let ws = new WebSocket("ws://localhost:8080");
         const clientID = null;
         const gameID = null;
         const eyes = ["eyes_1.png", "eyes_2.png", "eyes_3.png"];
         const mouths = [];
         const bodies = [];
+
+        //elements
+        
 
         ws.onmessage = message => {
             if(message.data.method === "connect"){
@@ -47,7 +139,9 @@
         }
 
         function changeStyle(direction, style){
-            let currentImageSource = document.getElementsByClassName(style).src;
+            let currentImageSource = document.getElementById(style).src;
+            const currentImageSourceRoot = currentImageSource.substring(0, currentImageSource.length - 10);
+            const currentImageSourceFile = currentImageSource.substring(currentImageSource.length - 10,currentImageSource.length);
             styleList = null;
             //setting styleList variable in terms of which style it is
             if(style==="eyeStyle"){ 
@@ -59,11 +153,12 @@
             else{ //for body style
                 styleList = bodies;
             }
-            const position = findInStyleList(currentImageSource, styleList);
+            let position = findInStyleList(currentImageSourceFile, styleList);
 
-            if(position > 0){
+            if(position >=0){
                 position = traverse(position, direction, styleList);
-                document.getElementsByClassName(style).src = styleList[position];
+                const newSource =  styleList[position];
+                document.getElementById(style).src = newSource;
             }
             else{
                 console.log("Image index in eyes array not valid, it is less than 0."); // shows error if eyePosition is <0
@@ -72,6 +167,8 @@
 
         function leftEyes() {
             changeStyle("left", "eyeStyle");
+            console.log("button pressed");
+            leftEyesButton.style.background = "red";
         }
 
         function rightEyes() {
@@ -93,6 +190,13 @@
         function rightBody() {
             changeStyle("right", "bodyStyle");
         }
+
+        
+        
+
+        
+
+        
 
         /*The below functions are for the play game and play private game buttons*/
         function createGuid() {
@@ -116,99 +220,11 @@
                 gameID: gameID,
                 clientID: clientID
             }));
-            window.location.href = "lobby.html/" + gameID; // redirects user to the lobby page
+            window.location.href = "lobby.html"; // redirects user to the lobby page
         }
 
 
     </script>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
-    <title>Home Page</title>
-</head>
-<body>
-    <h1 id="pageTitle">Libbl</h1>
-    <form id="enterDetails">
-    <div>
-        <div>
-            <input type="text" id="name" placeholder="Enter your name...">
-        </div>
-
-        <div id="customiseIcon">
-            <div id="customiseEyes" class="iconPart">
-                <button type="button" onclick="leftEyes()">
-                    <img class="toolIcon" src="leftArrow.png" alt="left arrow icon">
-        
-                </button>
-    
-                <img class="eyeStyle" id="eyeStyle" src="eyes_1.png" alt=""> <!--will add images later and functions to change images when arrows clicked-->
-
-                <button type="button" onclick="rightEyes()">
-                    <img class="toolIcon" src="rightArrow.png" alt="right arrow icon">
-        
-                </button>
-            </div>
-            
-            <div id="customiseMouth" class="iconPart">
-                <button type="button" onclick="leftMouth()">
-                    <img class="toolIcon" src="leftArrow.png" alt="left arrow icon">
-        
-                </button>
-
-                <img class="mouthStyle" src="" alt="">
-
-                <button type="button" onclick="rightMouth()">
-                    <img class="toolIcon" src="rightArrow.png" alt="right arrow icon">
-        
-                </button>
-
-            </div>
-
-            <div id="customiseBody" class="iconPart">
-                <button type="button" onclick="leftBody()">
-                    <img class="toolIcon" src="leftArrow.png" alt="left arrow icon">
-        
-                </button>
-
-                <img class="bodyStyle" src="" alt="">
-
-                <button type="button" onclick="rightBody()">
-                    <img class="toolIcon" src="rightArrow.png" alt="right arrow icon">
-        
-                </button>
-
-            </div>
-            
-
-        </div>
-
-        <!--
-        <div><a id="playButton" class="homepageButtons" href="gamepage.html">Play</a>
-            <a href="lobby.html" target="_self" id="privateGameButton" class="homepageButtons">Create Private Game</a>
-        </div>
-        -->
-        <div>
-            <button id="playButton" class="homepageButtons" onclick="playPublicGame()">Play</button>
-            <button id="privateGameButton" class="homepageButtons" onclick="playPrivateGame()">Create Private Game</button>
-        </div>
-        
-    </div>
-
-    <div>
-
-
-    </div>
-    </form>
-
-    <div id="descriptionBox">
-        <h3>Information</h3>
-        <p id="information">blah</p>
-
-        <h3>How to play</h3>
-        <p id="howToPlay">blah blah</p>
-
-    </div>
 
 </body>
 </html>

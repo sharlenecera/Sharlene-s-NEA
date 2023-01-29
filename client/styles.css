@@ -16,9 +16,15 @@
 }
 
 #customiseIcon {
-    width: 200px;
-    height: 200px;
+    width: 100px;
+    height: 100px;
 }
+
+#customiseEyes {
+    display: inline;
+}
+
+
 
 .iconPart {
     display: flex;
@@ -177,6 +183,6 @@
     align-content: stretch;
 }
 
-@media screen and (max-widdth: 700px) { /*responsive layout for menu and stuff */
+@media screen and (max-width: 700px) { /*responsive layout for menu and stuff */
 
 }

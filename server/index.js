@@ -26,42 +26,123 @@ const wss = new WebSocketServer({
 })
 
 wss.on("request", request => {
-    connection = request.accept(null, request.origin);
+    const connection = request.accept(null, request.origin);
+
     const clientID = createGuid();
-    let clientObject = {
-        clientID: clientID,
-        method: "connect"
+    clients[clientID] = {
+        connection: connection
     }
-    clients.push(clientObject);
+    connection.send(JSON.stringify({ // maybe put this function and the below function into the function when the connection turns on
+        method: "connect",
+        clientID: clientID
+    }));
 
     connection.on("open", () => console.log("a new connection has opened!"));
 
-    connection.send(JSON.stringify({ // maybe put this function and the below function into the function when the connection turns on
-        clientID: clientID
-    }))
 
-
-    
     connection.on('message', message => {
 
         console.log(`received: ${message.utf8Data}`);
         const messageFromClient = JSON.parse(message.utf8Data);
-        if(messageFromClient.type === "message"){  // if the data received is a message,
+        if(messageFromClient.method === "message"){  // if the data received is a message,
             clients.forEach(eachClient => { // it will be sent to all the clients apart from the one that sent it
-                if(/*eachClient.connection !== connection &&*/ eachClient.connection.readyState==1){ //ready state is 1 when a socket is OPEN and ready to communicate
+                if(eachClient.connection !== connection && eachClient.connection.readyState==1){ //ready state is 1 when a socket is OPEN and ready to communicate
                     eachClient.send(JSON.stringify({
-                        "type": "message",
-                        "messageContent": "message from server it was sent"//messageFromClient.messageContent
+                        type: "message",
+                        messageContent: "message from server it was sent"//messageFromClient.messageContent
                     }));
                 }
             })
         }
-        else if(messageFromClient.type === "createGame"){
-            const newGame = {
-                gameID: messageFromClient.gameID,
-                gameClients: [messageFromClient.clientID]
+
+        // homepage / index
+
+        if(messageFromClient.method === "createPrivateGame"){
+            const gameID = createGuid();
+            const clientID = messageFromClient.clientID;
+            games[gameID] = {
+                gameID: gameID,
+                clients: []
             }
+
+            connection.send(JSON.stringify({
+                method: "createPrivateGame",
+                game: games[gameID]
+            }));
         }
+
+        if(messageFromClient.method === "joinPrivateGame"){
+            const gameID = messageFromClient.gameID;
+            const clientID = messageFromClient.clientID;
+            const game = games[gameID];
+            if(game.clients.length >= 10){
+                return;
+            }
+            game.clients.push({
+                clientID: clientID
+            });
+
+            game.clients.forEach(eachClient => {
+                if(eachClient.connection !== connection && eachClient.connection.readyState==1){
+                    clients[eachClient.clientID].connection.send(JSON.stringify({
+                        method: "joinPrivateGame",
+                        game: game
+                    }));
+                }
+            })
+        }
+
+        if(messageFromClient.method === "draw"){
+            clients.forEach(eachClient => {
+                if(eachClient.connection !== connection && eachClient.connection.readyState==1){
+                    eachClient.send(JSON.stringify({
+                        method: "drawUpdate",
+                        game: {
+                            gameID: messageFromClient.messageContent.gameID
+                        }
+                    }));
+                }
+            })
+        }
+
+        // lobby page
+
+        if(messageFromClient.method === "changeNumRounds"){
+            clients.forEach(eachClient => {
+                if(eachClient.connection !== connection && eachClient.connection.readyState==1){
+                    const numRounds = messageFromClient.numRounds;
+                    eachClient.send(JSON.stringify({
+                        method: "updateNumRounds",
+                        numRounds: numRounds
+                    }));
+                }
+            })
+        }
+
+        if(messageFromClient.method === "changeRoundLength"){
+            clients.forEach(eachClient => {
+                if(eachClient.connection !== connection && eachClient.connection.readyState==1){
+                    const roundLength = messageFromClient.roundLength;
+                    eachClient.send(JSON.stringify({
+                        method: "updateRoundLength",
+                        roundLength: roundLength
+                    }));
+                }
+            })
+        }
+
+        if(messageFromClient.method === "changeUseCustomWords"){
+            clients.forEach(eachClient => {
+                if(eachClient.connection !== connection && eachClient.connection.readyState==1){
+                    const useCustomWords = messageFromClient.useCustomWords;
+                    eachClient.send(JSON.stringify({
+                        method: "updateUseCustomWords",
+                        useCustomWords: useCustomWords
+                    }));
+                }
+            })
+        }
+        
     
   });
 });

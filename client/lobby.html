@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lobby</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="index.js"></script>
+    <script src="lobby.js"></script>
 </head>
 <body>
     <div id="menu">
@@ -15,25 +15,10 @@
     <div id="settings">
         <h2 class="lobbyTitles">Settings</h2>
         <form id="changeSettings">
-            <script>
-                let form = document.getElementById("changeSettings");
-
-                let numRounds = 0;
-                let roundLength = 0;
-                let useCustomWords = false;
-
-                function getSettings() {
-                    event.preventDefault(); // stops the form from being submitted
-
-                    numRounds = form["numRounds"].value;
-                    roundLength = form["roundLength"].value;
-                    useCustomWords = form["useCustomWords"].checked; //returns boolean
-                }
-            </script>
             <h3>Lobby</h3>
             <div class="settings">
                 <label for="numRounds">Number of Rounds</label>
-                <select id="numRounds">
+                <select id="numRounds" oninput="changeNumRounds()">
                     <option value="2">2</option>
                     <option value="3">3</option>
                     <option value="4">4</option>
@@ -53,7 +38,7 @@
 
             <div class="settings">
                 <label for="roundLength">Round Length</label>
-                <select id="roundLength">
+                <select id="roundLength" oninput="changeRoundLength()">
                     <option value="20">20</option>
                     <option value="30">30</option>
                     <option value="40">40</option>
@@ -73,7 +58,7 @@
 
             <div class="settings">
                 <label for="useCustomWords">Only use custom words.</label>
-                <input type="checkbox" id="useCustomWords" name="useCustom">
+                <input type="checkbox" id="useCustomWords" name="useCustom" oninput="changeUseCustomWords()">
 
             </div>
 

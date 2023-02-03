@@ -5,10 +5,10 @@
 
 
 #pageTitle {
-    font-size: 50 px;
+    font-size: 150 px;
 }
 
-/*home page */
+/*------------------------------------home page------------------------------------*/
 
 #privateGameButton {
     text-decoration: none;
@@ -16,25 +16,44 @@
 }
 
 #customiseIcon {
-    width: 100px;
-    height: 100px;
-}
-
-#customiseEyes {
-    display: inline;
-}
-
-
-
-.iconPart {
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
-    justify-content: center;
-    align-items: center;
+    width: 500px;
+    height: 500px;
 }
 
-/*lobby page*/
+.leftButtons, .rightButtons {
+    display: flex;
+    flex-direction: column;
+}
+
+.iconPart {
+    position: relative;
+    top: 0;
+    left: 0;
+}
+
+#eyeStyle {
+    position: absolute;
+    top: 20px;
+    left: 45px;
+}
+
+#mouthStyle {
+    position: absolute;
+    top: 70px;
+    left: 85px;
+}
+
+#bodyStyle {
+    position: relative;
+    top: 0;
+    left: 0;
+}
+
+
+/*------------------------------------lobby page------------------------------------*/
 
 .lobbyTitles {
     display: box;

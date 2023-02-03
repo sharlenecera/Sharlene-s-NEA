@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
     <title>Home Page</title>
+    <script src="index.js"></script>
 </head>
 <body>
     <h1 id="pageTitle">Libbl</h1>
@@ -16,63 +17,65 @@
         </div>
 
         <div id="customiseIcon" width="1000px">
-            <div id="customiseEyes" class="iconPart">
+            <div class="leftButtons">
                 <button type="button" id="leftEyesButton" onclick="leftEyes()">
-                    <img class="toolIcon" src="leftArrow.png" alt="left arrow icon">
-        
+                    <img class="toolIcon" src="images/leftArrow.png" alt="left arrow icon">
                 </button>
-    
-                <img id="eyeStyle" src="eyes_1.png" alt="" height="100px" width="200px"> <!--will add images later and functions to change images when arrows clicked-->
 
-                <button type="button" id="rightEyesButton" onclick="rightEyes()">
-                    <img class="toolIcon" src="rightArrow.png" alt="right arrow icon">
-        
+                <button type="button" id="leftMouthButton" onclick="leftMouth()">
+                    <img class="toolIcon" src="images/leftArrow.png" alt="left arrow icon">
                 </button>
+
+                <button type="button" id="leftBodyButton" onclick="leftBody()">
+                    <img class="toolIcon" src="images/leftArrow.png" alt="left arrow icon">
+                </button>
+                
+            </div>
+
+            <div class="iconPart" height="200px" width="200px">
+                <img id="bodyStyle" src="images/body_1.png" alt="body of icon" height="170px" width="230px">
+                <img id="eyeStyle" src="images/eyes_1.png" alt="eyes of icon" height="70px" width="140px"> <!--will add images later and functions to change images when arrows clicked-->
+                <img id="mouthStyle" src="images/mouth_1.png" alt="mouth of icon" height="30px" width="60px">
+                
+
             </div>
             
-            <div id="customiseMouth" class="iconPart">
-                <button type="button" id="leftMouthButton" onclick="leftMouth()">
-                    <img class="toolIcon" src="leftArrow.png" alt="left arrow icon">
+            <div class="rightButtons">
+                <button type="button" id="rightEyesButton" onclick="rightEyes()">
+                    <img class="toolIcon" src="images/rightArrow.png" alt="right arrow icon">
         
                 </button>
 
-                <img class="mouthStyle" src="" alt="">
-
+                
                 <button type="button" id="rightMouthButton" onclick="rightMouth()">
-                    <img class="toolIcon" src="rightArrow.png" alt="right arrow icon">
+                    <img class="toolIcon" src="images/rightArrow.png" alt="right arrow icon">
         
                 </button>
-
-            </div>
-
-            <div id="customiseBody" class="iconPart">
-                <button type="button" id="leftBodyButton" onclick="leftBody()">
-                    <img class="toolIcon" src="leftArrow.png" alt="left arrow icon">
-        
-                </button>
-
-                <img class="bodyStyle" src="" alt="">
 
                 <button type="button" id="rightBodyButton" onclick="rightBody()">
-                    <img class="toolIcon" src="rightArrow.png" alt="right arrow icon">
+                    <img class="toolIcon" src="images/rightArrow.png" alt="right arrow icon">
         
                 </button>
 
             </div>
+
             
 
         </div>
 
         
-        <div><a id="playButton" class="homepageButtons" href="gamepage.html">Play</a>
-            <a href="lobby.html" target="_self" id="privateGameButton" class="homepageButtons">Create Private Game</a>
-        </div>
-        <!--
         <div>
+            
             <button id="playButton" class="homepageButtons" onclick="playPublicGame()">Play</button>
-            <button id="privateGameButton" class="homepageButtons" onclick="playPrivateGame()">Create Private Game</button>
+            <button id="privateGameButton" class="homepageButtons" onclick="createPrivateGame()">Create Private Game</button>
+            <!--
+            <a id="playButton" class="homepageButtons" href="gamepage.html">Play</a>
+            <a href="lobby.html" target="_self" id="privateGameButton" class="homepageButtons">Create Private Game</a>-->
+                        
+            <input id="joinwithCodeBox" type="text" placeholder="Have a join code? Enter here...">
+            <button id="joinWithCodeButton" onclick="joinWithCode()" enterkeyhint="send"> > </button>
         </div>
-        -->
+        
     </div>
 
     <div>
@@ -83,148 +86,13 @@
 
     <div id="descriptionBox">
         <h3>Information</h3>
-        <p id="information">blah</p>
+        <p id="information">Customise your own character and click play or create a private game to get started!</p>
 
         <h3>How to play</h3>
-        <p id="howToPlay">blah blah</p>
+        <p id="howToPlay">One person is picked as the drawer and they must choose one of three words to draw. The other players should guess. The fastest guesser and best drawer wins!</p>
 
     </div>
 
-    <script>
-        let ws = new WebSocket("ws://localhost:8080");
-        const clientID = null;
-        const gameID = null;
-        const eyes = ["eyes_1.png", "eyes_2.png", "eyes_3.png"];
-        const mouths = [];
-        const bodies = [];
-
-        //elements
-        
-
-        ws.onmessage = message => {
-            if(message.data.method === "connect"){
-                clientID = message.data.clientID;
-            }
-        }
-
-
-
-        <!--The below functions change the picture between the arrows in the custmoise icon box-->
-
-        function findInStyleList(source,styleList){
-            for(let i=0; i<styleList.length; i++){
-                if(source === styleList[i]){
-                    return i;
-                }
-            }
-            return -1; // if not found, -1 is returned
-        }
-
-        function traverse(currentPosition, direction, iconStyles){ // for moving along the circular queues for each of the icon styles 
-            const queueLength = iconStyles.length;
-            if(direction === "left"){
-                if(currentPosition===0){
-                    return queueLength-1; // moves pointer to the end of the queue
-                }
-                return currentPosition -1; // decrements pointer
-
-            }
-            else if(direction === "right"){
-                if(currentPosition === queueLength-1){
-                    return 0; // moves pointer back to start
-                }
-                return currentPosition +1; // increments pointer
-                
-            }
-        }
-
-        function changeStyle(direction, style){
-            let currentImageSource = document.getElementById(style).src;
-            const currentImageSourceRoot = currentImageSource.substring(0, currentImageSource.length - 10);
-            const currentImageSourceFile = currentImageSource.substring(currentImageSource.length - 10,currentImageSource.length);
-            styleList = null;
-            //setting styleList variable in terms of which style it is
-            if(style==="eyeStyle"){ 
-                styleList = eyes;
-            }
-            else if(style === "mouthStyle"){
-                styleList = mouths;
-            }
-            else{ //for body style
-                styleList = bodies;
-            }
-            let position = findInStyleList(currentImageSourceFile, styleList);
-
-            if(position >=0){
-                position = traverse(position, direction, styleList);
-                const newSource =  styleList[position];
-                document.getElementById(style).src = newSource;
-            }
-            else{
-                console.log("Image index in eyes array not valid, it is less than 0."); // shows error if eyePosition is <0
-            }
-        }
-
-        function leftEyes() {
-            changeStyle("left", "eyeStyle");
-            console.log("button pressed");
-            leftEyesButton.style.background = "red";
-        }
-
-        function rightEyes() {
-            changeStyle("right", "eyeStyle");
-        }
-
-        function leftMouth() {
-            changeStyle("left", "mouthStyle");
-        }
-
-        function rightMouth() {
-            changeStyle("right", "mouthStyle");
-        }
-
-        function leftBody() {
-            changeStyle("left", "bodyStyle");
-        }
-
-        function rightBody() {
-            changeStyle("right", "bodyStyle");
-        }
-
-        
-        
-
-        
-
-        
-
-        /*The below functions are for the play game and play private game buttons*/
-        function createGuid() {
-        const firstPart = Math.floor(Math.random() * Math.pow(16,8)).toString(16);
-        const secondPart = Math.floor(Math.random() * Math.pow(16,4)).toString(16);
-        const thirdPart = Math.floor(Math.random() * Math.pow(16,4)).toString(16);
-        const fourthPart = Math.floor(Math.random() * Math.pow(16,4)).toString(16);
-        const fifthPart = Math.floor(Math.random() * Math.pow(16,12)).toString(16);
-        const guid = firstPart + '-' + secondPart + '-' + thirdPart + '-' + fourthPart + '-' + fifthPart
-        return guid;
-}
-        
-        function playPublicGame() {
-            window.location.href = "gamepage.html"; // redirects user to game
-        }
-
-        function playPrivateGame(){
-            gameID = createGuid();
-            ws.send(JSON.stringify({
-                method: "createGame",
-                gameID: gameID,
-                clientID: clientID
-            }));
-            window.location.href = "lobby.html"; // redirects user to the lobby page
-        }
-
-
-    </script>
 
 </body>
 </html>

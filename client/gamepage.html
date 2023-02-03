@@ -141,32 +141,32 @@
 
     <div id="toolbox">
         <button type="button" onclick="setPaintbrush()">
-            <img id="paintbrush" class="toolIcon" src="paintbrush.png" alt="paintbrush icon">
+            <img id="paintbrush" class="toolIcon" src="images/paintbrush.png" alt="paintbrush icon">
 
         </button>
 
         <button type="button" onclick="setEraser()">
-            <img id="eraser" class="toolIcon" src="eraser.png" alt="eraser icon">
+            <img id="eraser" class="toolIcon" src="images/eraser.png" alt="eraser icon">
 
         </button>
 
         <button type="button" onclick="clearCanvas()">
-            <img id="clear" class="toolIcon" src="clear.png" alt="clear screen icon">
+            <img id="clear" class="toolIcon" src="images/clear.png" alt="clear screen icon">
 
         </button>
 
         <button type="button" onclick="fill()"> <!--no functionality yet-->
-            <img id="fill" class="toolIcon" src="fill.png" alt="fill icon">
+            <img id="fill" class="toolIcon" src="images/fill.png" alt="fill icon">
 
         </button>
 
         <button type="button" onclick="undo()">
-            <img id="undo" class="toolIcon" src="undo.png" alt="undo icon">
+            <img id="undo" class="toolIcon" src="images/undo.png" alt="undo icon">
 
         </button>
 
         <button type="button" onclick="redo()">
-            <img id="redo" class="toolIcon" src="redo.png" alt="redo icon">
+            <img id="redo" class="toolIcon" src="images/redo.png" alt="redo icon">
 
         </button>
 
@@ -262,10 +262,13 @@
         <script>
             let ws = new WebSocket("ws://localhost:8080");
 
+            ws.onmessage = message => console.log(`We received a message from server ${message.data}`);
+
             ws.addEventListener("message", function(event){ // for when receiving messages from server
                 const messageFromServer = JSON.parse(event.data);
-                if(messageFromServer.type === "message"){
+                if(messageFromServer.method === "message"){
                     displayMessage(messageFromServer.messageContent);
+                    console.log(messageFromServer.messageContent); //temporary
                 }
             });
 
@@ -284,8 +287,8 @@
                 }
                 else{
                     ws.send(JSON.stringify({
-                        "type": "message",
-                        "messageContent": message
+                        method: "message",
+                        messageContent: message
                     }));
                     displayMessage(message);
                     messageBox.value = "";

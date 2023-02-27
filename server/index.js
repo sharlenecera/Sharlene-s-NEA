@@ -10,12 +10,14 @@ function createGuid() {
     return guid;
 }
 
+
+
 const http = require("http");
-const { getuid } = require("process");
+// const { getuid } = require("process");
 const WebSocketServer = require("websocket").server;
 let connection = null;
-let clients = [];
-let games = []
+let clients = {};
+let games = {};
 
 const httpserver = http.createServer((req,res) => {
     console.log("we have received a request");
@@ -24,6 +26,8 @@ const httpserver = http.createServer((req,res) => {
 const wss = new WebSocketServer({
     "httpServer": httpserver
 })
+
+wss.on("")
 
 wss.on("request", request => {
     const connection = request.accept(null, request.origin);
@@ -59,10 +63,15 @@ wss.on("request", request => {
 
         if(messageFromClient.method === "createPrivateGame"){
             const gameID = createGuid();
-            const clientID = messageFromClient.clientID;
+            
+            const client = {
+                clientID: messageFromClient.clientID,
+                playerName: messageFromClient.playerName,
+                iconObject: messageFromClient.iconObject
+            }
             games[gameID] = {
                 gameID: gameID,
-                clients: []
+                clients: [client] // adds host to clients list when made
             }
 
             connection.send(JSON.stringify({
@@ -70,27 +79,95 @@ wss.on("request", request => {
                 game: games[gameID]
             }));
         }
-
+        //make a join game function similar to joinPriavteGame
+        
         if(messageFromClient.method === "joinPrivateGame"){
             const gameID = messageFromClient.gameID;
-            const clientID = messageFromClient.clientID;
             const game = games[gameID];
+            
+            // if invalid gameID
+            if(games[gameID] === undefined){ 
+                clients[messageFromClient.clientID].connection.send(JSON.stringify({
+                    method: "joinPrivateGame",
+                    result: "fail",
+                    reason:  "Invalid game code."
+                }))
+                return;
+            }
+            
+
+            //if game full
             if(game.clients.length >= 10){
+                clients[messageFromClient.clientID].connection.send(JSON.stringify({
+                    method: "joinPrivateGame",
+                    result: "fail",
+                    reason: "Game full."
+                }))
                 return;
             }
             game.clients.push({
-                clientID: clientID
+                clientID: messageFromClient.clientID,
+                playerName: messageFromClient.playerName,
+                iconObject: messageFromClient.iconObject
             });
-
+            
             game.clients.forEach(eachClient => {
-                if(eachClient.connection !== connection && eachClient.connection.readyState==1){
-                    clients[eachClient.clientID].connection.send(JSON.stringify({
+                const client = clients[eachClient.clientID];
+                /*if(client.connection.readyState==1){
+                    client.connection.send(JSON.stringify({
                         method: "joinPrivateGame",
+                        result: "success",
                         game: game
                     }));
-                }
+                }*/
+                client.connection.send(JSON.stringify({
+                    method: "joinPrivateGame",
+                    result: "success",
+                    game: game
+                }));
             })
         }
+
+        if(messageFromClient.method === "updatePlayersInLobby"){
+
+            const game = games[gameID];
+            
+            
+
+            if(messageFromClient.event === "join"){
+                //creating new list property called playersInLobby if the first time it's called
+                if(games[gameID][playersInLobby] === undefined){
+                    games[gameID][playersInLobby] = []; 
+                }
+                const clientObj = games[gameID].clients[games[gameID].clients.findIndex(x => x.clientID === clientID)]; // finding index of client in game clients list and assigning the object from the list to a variable
+                games[gameID][playersInLobby].push(clientObj); 
+                
+            }
+            else if(messageFromClient.event === "exit"){
+                //assuming exit method is only used when there are more than 0 players in playersInLobby list.
+                const indexInPlayersList = games[gameID][playersInLobby].findIndex(x => x.clientID === clientID); //returns undefined if not found
+                //deleting client from players list:
+                games[gameID][playersInLobby].splice(indexInPlayersList, 1);
+                //deleting client from game clients list:
+                const indexInGameClients = games[gameID].clients.findIndex(x => x.clientID === clientID);
+                games[gameID].clients.splice(indexInGameClients, 1);
+
+            }
+            // sends the updated playersInLobby list to everyon
+            if(games[gameID][playersInLobby] > 1){
+                game.clients.forEach(eachClient => {
+                    const client = clients[eachClient.clientID];
+                    if(client.connection.readyState==1){
+                        client.connection.send(JSON.stringify({
+                            method: "updatePlayersInLobby",
+                            playersInLobby: games[gameID][playersInLobby]
+                        }));
+                    }
+                })
+            }
+        }
+
+        /* not completed
 
         if(messageFromClient.method === "draw"){
             clients.forEach(eachClient => {
@@ -104,14 +181,17 @@ wss.on("request", request => {
                 }
             })
         }
+        */
 
         // lobby page
 
         if(messageFromClient.method === "changeNumRounds"){
-            clients.forEach(eachClient => {
-                if(eachClient.connection !== connection && eachClient.connection.readyState==1){
+            const game = games[messageFromClient.gameID];
+            game.clients.forEach(eachClient => {
+                const client = clients[eachClient.clientID];
+                if(client.connection !== connection && client.connection.readyState==1){
                     const numRounds = messageFromClient.numRounds;
-                    eachClient.send(JSON.stringify({
+                    client.connection.send(JSON.stringify({
                         method: "updateNumRounds",
                         numRounds: numRounds
                     }));
@@ -120,10 +200,12 @@ wss.on("request", request => {
         }
 
         if(messageFromClient.method === "changeRoundLength"){
-            clients.forEach(eachClient => {
-                if(eachClient.connection !== connection && eachClient.connection.readyState==1){
+            const game = games[messageFromClient.gameID];
+            game.clients.forEach(eachClient => {
+                const client = clients[eachClient.clientID];
+                if(client.connection !== connection && client.connection.readyState==1){
                     const roundLength = messageFromClient.roundLength;
-                    eachClient.send(JSON.stringify({
+                    client.connection.send(JSON.stringify({
                         method: "updateRoundLength",
                         roundLength: roundLength
                     }));
@@ -132,15 +214,40 @@ wss.on("request", request => {
         }
 
         if(messageFromClient.method === "changeUseCustomWords"){
-            clients.forEach(eachClient => {
-                if(eachClient.connection !== connection && eachClient.connection.readyState==1){
+            const game = games[messageFromClient.gameID];
+            game.clients.forEach(eachClient => {
+                const client = clients[eachClient.clientID];
+                if(client.connection !== connection && client.connection.readyState==1){
                     const useCustomWords = messageFromClient.useCustomWords;
-                    eachClient.send(JSON.stringify({
+                    client.connection.send(JSON.stringify({
                         method: "updateUseCustomWords",
                         useCustomWords: useCustomWords
                     }));
                 }
             })
+        }
+
+        if(messageFromClient.method === "startGame"){
+
+            // adding a game settings object to the game
+            games[messageFromClient.gameID].gameSettings = {
+                numRounds: messageFromClient.numRounds,
+                roundLength: messageFromClient.roundLength,
+                useCustomWords: messageFromClient.useCustomWords
+            };
+
+            // sending settings to everyone
+            /*
+            game.clients.forEach(eachClient => {
+                const client = clients[eachClient.clientID];
+                if(client.connection.readyState==1){
+                    
+                    client.connection.send(JSON.stringify({
+                        
+                    }));
+            })
+            */
+
         }
         
     

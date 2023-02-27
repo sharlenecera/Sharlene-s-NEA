@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lobby</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="lobby.js"></script>
+    
 </head>
 <body>
     <div id="menu">
@@ -63,7 +63,7 @@
             </div>
 
             <div class="settings">
-                <button id="startGameButton" onclick="getSettings()" href="gamepage.html">Start Game</button>
+                <button id="startGameButton" onclick="startGame()" href="gamepage.html">Start Game</button>
             </div>
 
         </form>
@@ -71,7 +71,14 @@
 
     <div id="playersDisplay">
         <h2 class="lobbyTitles">Players</h2>
+        
+        <div class="iconPart" height="200px" width="200px">
+            <img id="bodyStyle" src="images/body_1.png" alt="body of icon" height="170px" width="230px">
+            <img id="eyeStyle" src="images/eyes_1.png" alt="eyes of icon" height="70px" width="140px"> <!--will add images later and functions to change images when arrows clicked-->
+            <img id="mouthStyle" src="images/mouth_1.png" alt="mouth of icon" height="30px" width="60px">
+            
+        </div>
     </div>
-    
+    <script src="lobby.js"></script>
 </body>
 </html>

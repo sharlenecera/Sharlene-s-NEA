@@ -6,14 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
     <title>Home Page</title>
-    <script src="index.js"></script>
+    
 </head>
 <body>
     <h1 id="pageTitle">Libbl</h1>
     <form id="enterDetails">
     <div>
         <div>
-            <input type="text" id="name" placeholder="Enter your name...">
+            <input type="text" id="nameBox" placeholder="Enter your name...">
         </div>
 
         <div id="customiseIcon" width="1000px">
@@ -37,7 +37,6 @@
                 <img id="eyeStyle" src="images/eyes_1.png" alt="eyes of icon" height="70px" width="140px"> <!--will add images later and functions to change images when arrows clicked-->
                 <img id="mouthStyle" src="images/mouth_1.png" alt="mouth of icon" height="30px" width="60px">
                 
-
             </div>
             
             <div class="rightButtons">
@@ -72,8 +71,8 @@
             <a id="playButton" class="homepageButtons" href="gamepage.html">Play</a>
             <a href="lobby.html" target="_self" id="privateGameButton" class="homepageButtons">Create Private Game</a>-->
                         
-            <input id="joinwithCodeBox" type="text" placeholder="Have a join code? Enter here...">
-            <button id="joinWithCodeButton" onclick="joinWithCode()" enterkeyhint="send"> > </button>
+            <input id="joinWithCodeBox" type="text" placeholder="Have a join code? Enter here...">
+            <button id="joinWithCodeButton" onclick="joinWithCode()"> > </button>
         </div>
         
     </div>
@@ -92,7 +91,6 @@
         <p id="howToPlay">One person is picked as the drawer and they must choose one of three words to draw. The other players should guess. The fastest guesser and best drawer wins!</p>
 
     </div>
-
-
+    <script src="index.js"></script>
 </body>
 </html>
